@@ -29,14 +29,13 @@ export default function App() {
     <NavigationContainer>
       <StatusBar
         animated
-        backgroundColor="red"
         networkActivityIndicatorVisible
       />
       <Tab.Navigator
         initialRouteName="Home"
         backBehavior="history"
         sceneContainerStyle={{
-          backgroundColor: "#ffffff"
+          backgroundColor: "#ffffff",
         }}
         screenOptions={{
           tabBarActiveTintColor: "#01ad7f",
@@ -58,7 +57,11 @@ export default function App() {
             },
             tabBarIcon: ({ focused, color, size }) => (
               <Image
-                style={{ width: size, height: size, tintColor: focused ? undefined: color }}
+                style={{
+                  width: size,
+                  height: size,
+                  tintColor: focused ? undefined : color,
+                }}
                 resizeMethod="resize"
                 resizeMode="center"
                 source={require("./assets/icon.png")}
@@ -66,7 +69,11 @@ export default function App() {
             ),
           }}
         />
-        <Tab.Screen name="Ductulator" component={Ductulator} />
+        <Tab.Screen
+          name="Ductulator"
+          component={Ductulator}
+          options={{ headerTitle: "", headerShown: false }}
+        />
         <Tab.Screen name="Contact" component={Contact} />
       </Tab.Navigator>
     </NavigationContainer>

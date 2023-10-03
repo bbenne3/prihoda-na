@@ -7,6 +7,9 @@ import {
   View,
   Image,
   ScrollView,
+  StyleSheet,
+  Platform,
+  StatusBar,
 } from "react-native";
 
 const logoSource = Image.resolveAssetSource(require("../../assets/splash.png"));
@@ -38,7 +41,7 @@ export const Home = ({ navigation }) => {
   const scrollOffsetY = useRef(new Animated.Value(0)).current;
 
   return (
-    <SafeAreaView style={{ display: "flex", flex: 1 }}>
+    <SafeAreaView style={[{ display: "flex", flex: 1 }, styles.safeArea]}>
       <ScrollView
         alwaysBounceVertical
         bounces
@@ -97,10 +100,16 @@ export const Home = ({ navigation }) => {
           }}
         >
           <Text style={{ color: "#ffffff", fontSize: 24, fontWeight: "600" }}>
-            Calculating Duct Sizing
+            Calculate Duct Sizing
           </Text>
         </Pressable>
       </View>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  safeArea: {
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
+  }
+});
