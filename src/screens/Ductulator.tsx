@@ -20,26 +20,28 @@ const MIN_DUCT = 4;
 const MAX_DUCT = 118;
 const TIMEOUT = 150;
 
-// π/4 (pi divided by 4), which is used to convert between
-// the cross-sectional area of a circular duct and its diameter
-// a simplification for the calculation.
-const CROSS_SECTIONAL_CALC = Math.PI / 4;
+// 400 cfm per ton
+const AIRFLOW_TO_TONAGE = 400;
 
 function calculateThresholdFPM(
   cfm: number,
   fpm: number
 ): [number, number, string] {
-  let rawDuctSize = Math.round(cfm / (fpm * CROSS_SECTIONAL_CALC));
-  if (rawDuctSize < MIN_DUCT) {
-    rawDuctSize = MIN_DUCT;
-  } else if (rawDuctSize > MAX_DUCT) {
-    rawDuctSize = MAX_DUCT;
+  const ductDiameterSqFt = cfm / fpm;
+  let ductDiameter = Math.round(Math.sqrt(ductDiameterSqFt * 144 * (4 / Math.PI)));
+
+  if (ductDiameter < MIN_DUCT) {
+    ductDiameter = MIN_DUCT;
+  } else if (ductDiameter > MAX_DUCT) {
+    ductDiameter = MAX_DUCT;
   } else {
     // round to nearest 2" increment.
-    rawDuctSize = rawDuctSize % 2 !== 0 ? ++rawDuctSize : rawDuctSize;
+    ductDiameter = ductDiameter % 2 !== 0 ? ++ductDiameter : ductDiameter;
   }
 
-  return [fpm, rawDuctSize, getDescription(fpm)];
+  
+
+  return [fpm, Math.round(ductDiameter), getDescription(fpm)];
 }
 
 function getDescription(fpm: number) {
@@ -60,7 +62,7 @@ function calculateFPMAndDuctSize(cfm: number) {
   const avg = calculateThresholdFPM(cfm, 1_200);
   const max = calculateThresholdFPM(cfm, 1_500);
 
-  return [min, avg, max];
+  return [max, avg, min];
 }
 
 export const Ductulator = () => {
@@ -124,7 +126,13 @@ export const Ductulator = () => {
         }}
       >
         <Pressable
-          style={[styles.minusButton, styles.button]}
+          style={[
+            styles.minusButton,
+            styles.button,
+            size === MIN_CFM && styles.buttonDisabled,
+          ]}
+          disabled={size === MIN_CFM}
+          aria-disabled={size === MIN_CFM}
           onLongPress={() => {
             handleLongPress("Less");
           }}
@@ -181,7 +189,13 @@ export const Ductulator = () => {
           </Text>
         </View>
         <Pressable
-          style={[styles.plusButton, styles.button]}
+          style={[
+            styles.plusButton,
+            styles.button,
+            size === MAX_CFM && styles.buttonDisabled,
+          ]}
+          disabled={size === MAX_CFM}
+          aria-disabled={size === MAX_CFM}
           onLongPress={() => {
             handleLongPress("More");
           }}
@@ -236,7 +250,7 @@ export const Ductulator = () => {
           <Recommendation
             key={fpm}
             recommendation={idx + 1}
-            alt={idx % 2 === 0}
+            alt={idx === 0}
             fpm={fpm}
             ductSize={ductSize}
             note={note}
@@ -302,7 +316,7 @@ const styles = StyleSheet.create({
     lineHeight: 52,
     alignSelf: "center",
     width: "auto",
-    textAlign: "center"
+    textAlign: "center",
   },
   buttonText: {
     fontSize: 64,
@@ -328,12 +342,14 @@ const styles = StyleSheet.create({
     flexWrap: "nowrap",
     gap: 16,
     width: "100%",
-    backgroundColor: "#01ad7f",
+    backgroundColor: "#0f7ba5",
     minHeight: 75,
     padding: 16,
+    borderTopColor: "#FFFFFF",
+    borderTopWidth: 2,
   },
   recommendationAlt: {
-    backgroundColor: "#0f7ba5",
+    backgroundColor: "#01ad7f",
   },
   recommendationNumber: {
     display: "flex",
@@ -349,7 +365,7 @@ const styles = StyleSheet.create({
   recommendationData: {
     display: "flex",
     alignItems: "flex-end",
-    gap: 4,
+    gap: 0,
   },
   duct: {
     minWidth: 116,
@@ -368,5 +384,8 @@ const styles = StyleSheet.create({
     bottom: 8,
     right: 8,
     color: "#FFFFFF",
+  },
+  buttonDisabled: {
+    opacity: 0.5,
   },
 });
