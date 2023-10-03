@@ -28,7 +28,9 @@ function calculateThresholdFPM(
   fpm: number
 ): [number, number, string] {
   const ductDiameterSqFt = cfm / fpm;
-  let ductDiameter = Math.round(Math.sqrt(ductDiameterSqFt * 144 * (4 / Math.PI)));
+  let ductDiameter = Math.round(
+    Math.sqrt(ductDiameterSqFt * 144 * (4 / Math.PI))
+  );
 
   if (ductDiameter < MIN_DUCT) {
     ductDiameter = MIN_DUCT;
@@ -38,8 +40,6 @@ function calculateThresholdFPM(
     // round to nearest 2" increment.
     ductDiameter = ductDiameter % 2 !== 0 ? ++ductDiameter : ductDiameter;
   }
-
-  
 
   return [fpm, Math.round(ductDiameter), getDescription(fpm)];
 }
@@ -77,7 +77,7 @@ export const Ductulator = () => {
         type === "More" ? [SKIP_CFM, "min"] : [-1 * SKIP_CFM, "max"];
       const dbl = type === "More" ? DBL_SKIP_CFM : -1 * DBL_SKIP_CFM;
 
-      setSize((v) => Math[skip[1]]((v ?? MIN_CFM) + skip[0], MAX_CFM));
+      setSize((v) => Math[skip[1]]((!Number.isNaN(v) && v ? v : MIN_CFM) + skip[0], MAX_CFM));
       clearInterval(longSize.current);
       longSize.current = setInterval(() => {
         setSize((v) => Math[skip[1]]((v ?? MIN_CFM) + dbl, MAX_CFM));
@@ -140,7 +140,11 @@ export const Ductulator = () => {
             clearInterval(longSize.current);
           }}
           onPress={() => {
-            setSize((v) => Math.max((v ?? MAX_CFM) - SKIP_CFM, MIN_CFM));
+            setSize((v) => {
+              if (Number.isNaN(v))
+                return MAX_CFM;
+              return Math.max((v ?? MAX_CFM) - SKIP_CFM, MIN_CFM);
+            });
           }}
         >
           <Text style={[styles.buttonText, styles.primaryText]}>-</Text>
@@ -156,12 +160,14 @@ export const Ductulator = () => {
             keyboardType="number-pad"
             inputMode="numeric"
             onChangeText={(v) => {
-              if (v === undefined || v === "") return setSize(undefined);
+              if (v === undefined || v === "") {
+                setSize(undefined);
+                return;
+              }
               const val = parseInt(
                 v.replace(/[^0-9]/gi, "") || MIN_CFM.toString(),
                 10
               );
-
               setSize(val);
             }}
             onBlur={() => {
@@ -203,7 +209,10 @@ export const Ductulator = () => {
             clearInterval(longSize.current);
           }}
           onPress={() => {
-            setSize((v) => Math.min((v ?? MIN_CFM) + SKIP_CFM, MAX_CFM));
+            setSize((v) => {
+              if (Number.isNaN(v)) return MIN_CFM;
+              return Math.min((v ?? MIN_CFM) + SKIP_CFM, MAX_CFM);
+            });
           }}
         >
           <Text style={[styles.buttonText, styles.primaryText]}>+</Text>
