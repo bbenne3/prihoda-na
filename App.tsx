@@ -1,7 +1,8 @@
 import { StatusBar } from "expo-status-bar";
-import Entypo from "@expo/vector-icons/Entypo";
 import * as SplashScreen from "expo-splash-screen";
-import { Image, StyleSheet } from "react-native";
+import { FontAwesome5 } from '@expo/vector-icons'; 
+import { Ionicons } from '@expo/vector-icons'; 
+import { Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Home } from "./src/screens/Home";
@@ -27,10 +28,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <StatusBar
-        animated
-        networkActivityIndicatorVisible
-      />
+      <StatusBar animated networkActivityIndicatorVisible />
       <Tab.Navigator
         initialRouteName="Home"
         backBehavior="history"
@@ -72,9 +70,19 @@ export default function App() {
         <Tab.Screen
           name="Ductulator"
           component={Ductulator}
-          options={{ headerTitle: "", headerShown: false }}
+          options={{
+            headerTitle: "",
+            headerShown: false,
+            tabBarIcon: ({ focused, color, size }) => (
+              <FontAwesome5 name="calculator" size={size} color={color} />
+            ),
+          }}
         />
-        <Tab.Screen name="Contact" component={Contact} />
+        <Tab.Screen name="Contact" component={Contact} options={{
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons name="mail-open" size={size} color={color} />
+          )
+        }} />
       </Tab.Navigator>
     </NavigationContainer>
   );
