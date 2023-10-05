@@ -88,10 +88,12 @@ function calculateFPMAndDuctSize(amount: number, airflowMode: AirflowModes) {
   return [max, avg, min];
 }
 
+const isAndroid = Platform.OS === "android";
+
 export const Ductulator = () => {
   const [size, setSize] = useState<number | undefined>(MIN_CFM);
   const longSize = useRef<NodeJS.Timeout>();
-  const offset = Platform.OS === "android" ? StatusBar.currentHeight + 16 : 0;
+  const offset = isAndroid ? StatusBar.currentHeight + 16 : 0;
   const [airflowMode, setAirflowMode] = useState<AirflowModes>("cfm");
   const sizes = useMemo(
     () => calculateFPMAndDuctSize(size, airflowMode),
@@ -386,10 +388,10 @@ const Recommendation = ({
         alt && styles.recommendationAlt,
       ]}
     >
-      <Text style={styles.note} ref={noteRef}>
+      <Text style={[styles.note, showingTt && styles.bold]} ref={noteRef}>
         {note}
       </Text>
-      {showingTt && <Text style={styles.note}>{ductSizeDisplay} / {fpm}fpm</Text>}
+      {showingTt && <Text style={[styles.note, styles.bold]}>{ductSizeDisplay} / {fpm}fpm</Text>}
       {additionalInfo && (
         <View
           style={{
@@ -518,7 +520,7 @@ const styles = StyleSheet.create({
     flexWrap: "nowrap",
     width: "100%",
     backgroundColor: "#0f7ba5",
-    minHeight: 155,
+    minHeight: isAndroid ? 170 : 160,
     padding: 16,
     borderTopColor: "#FFFFFF",
     borderTopWidth: 2,
@@ -575,4 +577,7 @@ const styles = StyleSheet.create({
   buttonDisabled: {
     opacity: 0.5,
   },
+  bold: {
+    fontWeight: '600',
+  }
 });

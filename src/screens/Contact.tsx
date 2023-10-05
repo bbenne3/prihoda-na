@@ -46,7 +46,7 @@ export const Contact = () => {
             To find out more about Prihoda's Tailor-Made Air Dispersion Systems
             please visit us at{" "}
             <A href="https://prihodafabricduct.com" style={{color: "#01ad7f"}}>
-              https://prihodafabricduct.com <FontAwesome5 name="external-link-alt" size={16} color="currentColor" />
+              https://prihodafabricduct.com <FontAwesome5 name="external-link-alt" size={16} color="#01ad7f" />
             </A>
           </Text>
           <View style={{ paddingTop: 18 }} aria-role="presentation" />
@@ -71,7 +71,7 @@ export const Contact = () => {
             }}
           >
             Contact Us{" "}
-            <FontAwesome5 name="external-link-alt" size={16} color="currentColor" />
+            <FontAwesome5 name="external-link-alt" size={16} color="#FFFFFF" />
           </A>
           <View style={{ paddingBottom: 48 }} aria-role="presentation" />
           <Text style={{textAlign: 'center'}}> &#169; Prihoda, NA | All Rights Reserved</Text>
