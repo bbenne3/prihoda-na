@@ -35,7 +35,7 @@ function getCfmFromTonnage(tonnage: number) {
 function calculateThresholdFPM(
   cfm: number,
   fpm: number
-): [number, number, string] {
+): [number, number, [string, string | null | undefined]] {
   const ductDiameterSqFt = cfm / fpm;
   let ductDiameter = Math.round(
     Math.sqrt(ductDiameterSqFt * 144 * (4 / Math.PI))
@@ -53,16 +53,19 @@ function calculateThresholdFPM(
   return [fpm, Math.round(ductDiameter), getDescription(fpm)];
 }
 
-function getDescription(fpm: number) {
+function getDescription(fpm: number): [string, string | null | undefined] {
   switch (fpm) {
     case 1000:
-      return "sound sensitive";
+      return ["Sound sensitive application", null];
     case 1200:
-      return "direction changes upstream of fabric inlet";
+      return ["System with fittings/direction changes", null];
     case 1500:
-      return "straight duct upstream of fabric inlet";
+      return [
+        "Straight Duct",
+        "no fittings immediately upstream or downstream of fabric inline",
+      ];
     default:
-      return "";
+      return ["", null];
   }
 }
 
@@ -94,7 +97,7 @@ export const Ductulator = () => {
     [size, airflowMode]
   );
   const isCfm = airflowMode === "cfm";
-  
+
   // setting boundaries and rules based on type of airflow
   const [min, max, skip, dblSkip] = useMemo(() => {
     switch (airflowMode) {
@@ -108,7 +111,7 @@ export const Ductulator = () => {
   useEffect(() => {
     setSize((s) => {
       switch (airflowMode) {
-        case 'tonnage':
+        case "tonnage":
           return getTonnageFromCfm(s);
         default:
           return getCfmFromTonnage(s);
@@ -270,9 +273,9 @@ export const Ductulator = () => {
         >
           <Text style={{ color: isCfm ? "#0f7ba5" : "#0f7ba555" }}>CFM</Text>
           <Switch
-            trackColor={{ false: "#767577", true: "#81b0ff" }}
+            trackColor={{ false: "#88888833", true: "#88888833" }}
             thumbColor={isCfm ? "#0f7ba5" : "#01ad7f"}
-            ios_backgroundColor="#3e3e3e"
+            ios_backgroundColor="#88888833"
             onValueChange={(on) => setAirflowMode(!on ? "cfm" : "tonnage")}
             value={!isCfm}
           />
@@ -301,13 +304,13 @@ export const Ductulator = () => {
       >
         <Text
           style={{
-            fontSize: 38,
-            lineHeight: 48,
-            fontWeight: "700",
+            fontSize: 22,
+            lineHeight: 24,
+            fontWeight: "400",
             textAlign: "center",
           }}
         >
-          Recommendations
+          Prihoda Fabric Duct Sizing Recommendations
         </Text>
       </View>
       <ScrollView
@@ -320,11 +323,11 @@ export const Ductulator = () => {
         {sizes.map(([fpm, ductSize, note], idx) => (
           <Recommendation
             key={fpm}
-            recommendation={idx + 1}
             alt={idx === 0}
             fpm={fpm}
             ductSize={ductSize}
-            note={note}
+            note={note[0]}
+            additionalInfo={note[1]}
           />
         ))}
         <View style={{ padding: 36 }} />
@@ -363,29 +366,32 @@ const Recommendation = ({
   fpm,
   ductSize,
   note,
-  recommendation,
+  additionalInfo,
 }: {
   fpm: number;
   ductSize: number;
-  recommendation: number;
+  additionalInfo?: string | null | undefined;
   note: string;
   alt?: boolean;
 }) => (
   <View style={[styles.recommendation, alt && styles.recommendationAlt]}>
-    <Text style={styles.recommendationNumber}>{recommendation}</Text>
+    {/* <Text style={styles.recommendationNumber}>{recommendation}</Text> */}
+
+    <Text style={styles.note}>
+      {note}
+    </Text>
     <View style={styles.recommendationContainer}>
+      <View style={[styles.recommendationData, styles.duct]}>
+        <Text style={[styles.value, styles.ductValue]}>
+          {Number.isInteger(ductSize) ? ductSize + '"' : "--"}
+        </Text>
+        {/* <Text style={[styles.label, styles.ductLabel]}>Duct</Text> */}
+      </View>
       <View style={[styles.recommendationData]}>
         <Text style={styles.value}>{fpm}</Text>
         <Text style={styles.label}>FPM</Text>
       </View>
-      <View style={[styles.recommendationData, styles.duct]}>
-        <Text style={styles.value}>
-          {Number.isInteger(ductSize) ? ductSize + '"' : "--"}
-        </Text>
-        <Text style={styles.label}>Duct</Text>
-      </View>
     </View>
-    <Text style={styles.note}>{note}</Text>
   </View>
 );
 
@@ -434,9 +440,8 @@ const styles = StyleSheet.create({
   recommendation: {
     position: "relative",
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "column",
     flexWrap: "nowrap",
-    gap: 16,
     width: "100%",
     backgroundColor: "#0f7ba5",
     minHeight: 75,
@@ -456,7 +461,8 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 16,
     flexDirection: "row",
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
+    alignItems: 'center',
   },
   recommendationData: {
     display: "flex",
@@ -464,8 +470,18 @@ const styles = StyleSheet.create({
     gap: 0,
   },
   duct: {
+    display: "flex",
+    alignItems: "flex-start",
     minWidth: 116,
     textAlign: "right",
+  },
+  ductValue: {
+    fontSize: 84,
+  },
+  ductLabel: {
+    bottom: 0,
+    position: "absolute",
+    left: 40,
   },
   value: {
     fontSize: 48,
@@ -476,10 +492,8 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   note: {
-    position: "absolute",
-    bottom: 8,
-    right: 8,
     color: "#FFFFFF",
+    fontSize: 18,
   },
   buttonDisabled: {
     opacity: 0.5,
