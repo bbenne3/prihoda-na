@@ -11,6 +11,7 @@ import {
   ScrollView,
   Switch,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 type AirflowModes = "cfm" | "tonnage";
 
@@ -373,27 +374,100 @@ const Recommendation = ({
   additionalInfo?: string | null | undefined;
   note: string;
   alt?: boolean;
-}) => (
-  <View style={[styles.recommendation, alt && styles.recommendationAlt]}>
-    {/* <Text style={styles.recommendationNumber}>{recommendation}</Text> */}
+}) => {
+  const noteRef = useRef();
+  const [showingTt, setShowingTt] = useState(false);
+  const ductSizeDisplay = Number.isInteger(ductSize) ? ductSize + '"' : "--";
 
-    <Text style={styles.note}>
-      {note}
-    </Text>
-    <View style={styles.recommendationContainer}>
-      <View style={[styles.recommendationData, styles.duct]}>
-        <Text style={[styles.value, styles.ductValue]}>
-          {Number.isInteger(ductSize) ? ductSize + '"' : "--"}
+  return (
+    <View
+      style={[
+        styles.recommendation,
+        alt && styles.recommendationAlt,
+      ]}
+    >
+      <Text style={styles.note} ref={noteRef}>
+        {note}
+      </Text>
+      {showingTt && <Text style={styles.note}>{ductSizeDisplay} / {fpm}fpm</Text>}
+      {additionalInfo && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+            width: 60,
+            height: 60,
+            backgroundColor: "transparent",
+            display: "flex",
+            justifyContent: "flex-start",
+            alignItems: "flex-end",
+          }}
+        >
+          <View
+            style={{
+              position: "absolute",
+              width: 0,
+              height: 0,
+              backgroundColor: "transparent",
+              borderStyle: "solid",
+              borderRightWidth: 80,
+              borderTopWidth: 80,
+              borderRightColor: "transparent",
+              borderTopColor: "#FFFFFF99",
+              transform: "rotate(90deg)",
+            }}
+          />
+          <Pressable
+            style={{
+              width: 32,
+              aspectRatio: 1,
+              top: 8,
+              right: 8,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={() => {
+              setShowingTt((s) => !s);
+            }}
+            // onPressOut={() => setShowingTt(false)}
+            // onPointerLeave={() => setShowingTt(false)}
+          >
+            {!showingTt ? (
+              <Ionicons
+                name="information-circle-outline"
+                size={32}
+                color="#ffffff"
+              />
+            ) : (
+              <Ionicons name="close" size={32} color="#ffffff" />
+            )}
+          </Pressable>
+        </View>
+      )}
+
+      {!showingTt ? (
+        <View style={styles.recommendationContainer}>
+          <View style={[styles.recommendationData, styles.duct]}>
+            <Text style={[styles.value, styles.ductValue]}>
+              {ductSizeDisplay}
+            </Text>
+            {/* <Text style={[styles.label, styles.ductLabel]}>Duct</Text> */}
+          </View>
+          <View style={[styles.recommendationData]}>
+            <Text style={styles.value}>{fpm}</Text>
+            <Text style={styles.label}>FPM</Text>
+          </View>
+        </View>
+      ) : (
+        <Text style={[styles.additionalInfo, styles.note]}>
+          {additionalInfo}
         </Text>
-        {/* <Text style={[styles.label, styles.ductLabel]}>Duct</Text> */}
-      </View>
-      <View style={[styles.recommendationData]}>
-        <Text style={styles.value}>{fpm}</Text>
-        <Text style={styles.label}>FPM</Text>
-      </View>
+      )}
     </View>
-  </View>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   flex: {
@@ -444,7 +518,7 @@ const styles = StyleSheet.create({
     flexWrap: "nowrap",
     width: "100%",
     backgroundColor: "#0f7ba5",
-    minHeight: 75,
+    minHeight: 155,
     padding: 16,
     borderTopColor: "#FFFFFF",
     borderTopWidth: 2,
@@ -462,7 +536,7 @@ const styles = StyleSheet.create({
     gap: 16,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: 'center',
+    alignItems: "center",
   },
   recommendationData: {
     display: "flex",
@@ -494,6 +568,9 @@ const styles = StyleSheet.create({
   note: {
     color: "#FFFFFF",
     fontSize: 18,
+  },
+  additionalInfo: {
+    marginTop: 8,
   },
   buttonDisabled: {
     opacity: 0.5,
