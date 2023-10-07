@@ -23,6 +23,10 @@ import {
   useRef,
   useState,
 } from "react";
+import * as MailComposer from 'expo-mail-composer';
+
+
+console.log(MailComposer);
 
 const resolved = Image.resolveAssetSource(
   require("../../assets/logos/Prihoda3.png")
@@ -92,36 +96,52 @@ export const Contact = () => {
   );
 
   const constructBody = useCallback(() => {
+    const isHtml = true;
+    const newLine = isHtml ? '<br />' : `\r\n`; 
     const parts = [
-      `Quote reqeust for job:`,
-      `Suspension Type: ${jobDetails["Suspension Method"]}`,
-      `Material Type: ${jobDetails["Material Type"]}`,
-      `Dispersion Method: ${jobDetails["Dispersion Type"]}`,
-      `Custom Art: ${jobDetails["Custom Art"]}`,
-      `\r\n`,
-      `CFM: ${jobDetails.CFM}`,
-      `\r\n\r\n`,
+      `<b>Job Details</b>`,
+      newLine,
+      `Suspension Type: ${jobDetails["Suspension Method"] || ''}`,
+      `Material Type: ${jobDetails["Material Type"] || ''}`,
+      `Dispersion Method: ${jobDetails["Dispersion Type"] || ''}`,
+      `Custom Art: ${jobDetails["Custom Art"] || ''}`,
+      `CFM: ${jobDetails.CFM || ''}`,
+      newLine,
       `Additional Job Details:`,
     ];
-    return parts.join("\r\n");
+    return parts.join(newLine);
   }, [jobDetails]);
 
-  const openEmail = useCallback(() => {
-    Linking.canOpenURL(linkingApp)
-      .then((supported) => {
-        console.log('supported', supported)
-        if (supported) {
-          Linking.openURL(
-            `${linkingApp}:andrew@prihodafabricduct.com?subject=Quote Request: &body=${constructBody()}`
-          ).catch((e) => {
-            console.log("e", e);
-          });
-        }
-        console.log('then after open')
-      })
-      .catch((e) => {
-        console.log("can not open linking app", e);
-      });
+  const openEmail = useCallback(async () => {
+    const isAvailable = await MailComposer.isAvailableAsync();
+  
+    if (!isAvailable) {
+      Alert.alert('Unable to open email client.');
+      return;
+    }
+
+    await MailComposer.composeAsync({
+      subject: `Quote Request`,
+      recipients: ['andrew@prihodafabricduct.com'],
+      body: constructBody(),
+      isHtml: true,
+    });
+
+    // Linking.canOpenURL(linkingApp)
+    //   .then((supported) => {
+    //     console.log("supported", supported);
+    //     if (supported) {
+    //       Linking.openURL(
+    //         `${linkingApp}:andrew@prihodafabricduct.com?subject=Quote Request: &body=${constructBody()}`
+    //       ).catch((e) => {
+    //         console.log("e", e);
+    //       });
+    //     }
+    //     console.log("then after open");
+    //   })
+    //   .catch((e) => {
+    //     console.log("can not open linking app", e);
+    //   });
   }, [constructBody]);
 
   return (
@@ -325,8 +345,6 @@ export const Contact = () => {
           <View style={{ paddingTop: 48, flex: 1 }} aria-role="presentation" />
           <Pressable
             onPress={() => {
-              console.log('anything');
-              Alert.alert('hi');
               openEmail();
             }}
             style={{
@@ -336,9 +354,9 @@ export const Contact = () => {
               maxWidth: 400,
               gap: 8,
               display: "flex",
-              flexDirection: 'row',
+              flexDirection: "row",
               alignSelf: "center",
-              alignItems: 'center',
+              alignItems: "center",
               justifyContent: "flex-end",
             }}
           >
