@@ -57,13 +57,19 @@ function calculateThresholdFPM(
 function getDescription(fpm: number): [string, string | null | undefined] {
   switch (fpm) {
     case 1000:
-      return ["Sound sensitive application", null];
+      return [
+        "Sound sensitive application",
+        "Sound sensitive applications such as recording studios, libraries, classrooms, etc. need even lower velocities to reduce air movement noise.  Sounds attenuation prior to fabric should be considered (fabric or metal silencers, duct lining).",
+      ];
     case 1200:
-      return ["System with fittings/direction changes", null];
+      return [
+        "System with fittings/direction changes",
+        "More complex systems with direction changes (elbows/offsets) within 3x diameter upstream or downstream of the fabric inlet need lower velocities to prevent duct movement from turbulent airflow.",
+      ];
     case 1500:
       return [
         "Straight Duct",
-        "no fittings immediately upstream or downstream of fabric inline",
+        "No fittings or direction changes within 3x diameter of inlet.",
       ];
     default:
       return ["", null];
@@ -382,16 +388,12 @@ const Recommendation = ({
   const ductSizeDisplay = Number.isInteger(ductSize) ? ductSize + '"' : "--";
 
   return (
-    <View
-      style={[
-        styles.recommendation,
-        alt && styles.recommendationAlt,
-      ]}
-    >
-      <Text style={[styles.note, showingTt && styles.bold]} ref={noteRef}>
-        {note}
-      </Text>
-      {showingTt && <Text style={[styles.note, styles.bold]}>{ductSizeDisplay} / {fpm}fpm</Text>}
+    <View style={[styles.recommendation, alt && styles.recommendationAlt]}>
+      {!showingTt && (
+        <Text style={[styles.note, showingTt && styles.bold]} ref={noteRef}>
+          {note}
+        </Text>
+      )}
       {additionalInfo && (
         <View
           style={{
@@ -463,9 +465,13 @@ const Recommendation = ({
           </View>
         </View>
       ) : (
-        <Text style={[styles.additionalInfo, styles.note]}>
-          {additionalInfo}
-        </Text>
+        <View style={[styles.additionalInfo]}>
+          <Text style={[styles.note, styles.bold]}>
+            {ductSizeDisplay} / {fpm}fpm
+          </Text>
+          <View style={{marginTop: 8}} />
+          <Text style={[styles.note]}>{additionalInfo}</Text>
+        </View>
       )}
     </View>
   );
@@ -578,6 +584,6 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   bold: {
-    fontWeight: '600',
-  }
+    fontWeight: "600",
+  },
 });
