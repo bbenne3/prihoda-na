@@ -7,6 +7,9 @@ import {
   ImageBackground,
   Image,
   Modal,
+  Linking,
+  Platform,
+  Alert,
 } from "react-native";
 import { A } from "@expo/html-elements";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
@@ -24,6 +27,9 @@ import {
 const resolved = Image.resolveAssetSource(
   require("../../assets/logos/Prihoda3.png")
 );
+
+const isIos = Platform.OS === "ios";
+const linkingApp = isIos ? "message:" : "mailto";
 
 const defaultJobDetails = {
   "Suspension Method": null,
@@ -84,6 +90,39 @@ export const Contact = () => {
     (title: JobDetailCategories) => title === showingTitle,
     [showingTitle]
   );
+
+  const constructBody = useCallback(() => {
+    const parts = [
+      `Quote reqeust for job:`,
+      `Suspension Type: ${jobDetails["Suspension Method"]}`,
+      `Material Type: ${jobDetails["Material Type"]}`,
+      `Dispersion Method: ${jobDetails["Dispersion Type"]}`,
+      `Custom Art: ${jobDetails["Custom Art"]}`,
+      `\r\n`,
+      `CFM: ${jobDetails.CFM}`,
+      `\r\n\r\n`,
+      `Additional Job Details:`,
+    ];
+    return parts.join("\r\n");
+  }, [jobDetails]);
+
+  const openEmail = useCallback(() => {
+    Linking.canOpenURL(linkingApp)
+      .then((supported) => {
+        console.log('supported', supported)
+        if (supported) {
+          Linking.openURL(
+            `${linkingApp}:andrew@prihodafabricduct.com?subject=Quote Request: &body=${constructBody()}`
+          ).catch((e) => {
+            console.log("e", e);
+          });
+        }
+        console.log('then after open')
+      })
+      .catch((e) => {
+        console.log("can not open linking app", e);
+      });
+  }, [constructBody]);
 
   return (
     <SafeAreaView style={{ flex: 1, display: "flex" }}>
@@ -284,26 +323,38 @@ export const Contact = () => {
             ></JobDetail>
           </View>
           <View style={{ paddingTop: 48, flex: 1 }} aria-role="presentation" />
-          <A
-            href="https://prihodafabricduct.com/contact/"
+          <Pressable
+            onPress={() => {
+              console.log('anything');
+              Alert.alert('hi');
+              openEmail();
+            }}
             style={{
               backgroundColor: "#0f7ba5",
               paddingVertical: 16,
               paddingHorizontal: 22,
               maxWidth: 400,
-              color: "#ffffff",
+              gap: 8,
               display: "flex",
-              textAlign: "center",
+              flexDirection: 'row',
               alignSelf: "center",
+              alignItems: 'center',
               justifyContent: "flex-end",
-              lineHeight: 28,
-              fontWeight: "700",
-              fontSize: 22,
             }}
           >
-            Get Quote Selection{" "}
+            <Text
+              style={{
+                color: "#FFFFFF",
+                textAlign: "center",
+                lineHeight: 28,
+                fontWeight: "700",
+                fontSize: 22,
+              }}
+            >
+              Get Quote Selection{" "}
+            </Text>
             <FontAwesome5 name="external-link-alt" size={16} color="#FFFFFF" />
-          </A>
+          </Pressable>
           <View style={{ paddingBottom: 48 }} aria-role="presentation" />
           <Text style={{ textAlign: "center" }}>
             {" "}
