@@ -7,8 +7,6 @@ import {
   ImageBackground,
   Image,
   Modal,
-  Linking,
-  Platform,
   Alert,
 } from "react-native";
 import { A } from "@expo/html-elements";
@@ -23,17 +21,12 @@ import {
   useRef,
   useState,
 } from "react";
-import * as MailComposer from 'expo-mail-composer';
-
-
-console.log(MailComposer);
+import * as MailComposer from "expo-mail-composer";
+import { getStorageValue } from "../utils/asyncStorage";
 
 const resolved = Image.resolveAssetSource(
   require("../../assets/logos/Prihoda3.png")
 );
-
-const isIos = Platform.OS === "ios";
-const linkingApp = isIos ? "message:" : "mailto";
 
 const defaultJobDetails = {
   "Suspension Method": null,
@@ -54,10 +47,11 @@ type JobDetailsAction =
       field: "reset";
     };
 
-export const Contact = () => {
+export const Contact = ({ navigation, route }) => {
   const [[showingTitle, showing], showOptions] = useState<
     [JobDetailCategories, PropsWithChildren["children"]]
   >([null, null]);
+
   const [jobDetails, setJobDetails] = useReducer(
     (dets: typeof defaultJobDetails, action: JobDetailsAction) => {
       switch (action.field) {
@@ -87,6 +81,16 @@ export const Contact = () => {
   );
 
   useEffect(() => {
+    const unsub = navigation.addListener("focus", () => {
+      getStorageValue("cfm").then((v) => {
+        if (v) setJobDetails({ field: "CFM", value: v });
+      });
+    });
+
+    return unsub;
+  }, []);
+
+  useEffect(() => {
     showOptions([null, null]);
   }, [jobDetails, showOptions]);
 
@@ -97,15 +101,15 @@ export const Contact = () => {
 
   const constructBody = useCallback(() => {
     const isHtml = true;
-    const newLine = isHtml ? '<br />' : `\r\n`; 
+    const newLine = isHtml ? "<br />" : `\r\n`;
     const parts = [
       `<b>Job Details</b>`,
       newLine,
-      `Suspension Type: ${jobDetails["Suspension Method"] || ''}`,
-      `Material Type: ${jobDetails["Material Type"] || ''}`,
-      `Dispersion Method: ${jobDetails["Dispersion Type"] || ''}`,
-      `Custom Art: ${jobDetails["Custom Art"] || ''}`,
-      `CFM: ${jobDetails.CFM || ''}`,
+      `Suspension Type: ${jobDetails["Suspension Method"] || ""}`,
+      `Material Type: ${jobDetails["Material Type"] || ""}`,
+      `Dispersion Method: ${jobDetails["Dispersion Type"] || ""}`,
+      `Custom Art: ${jobDetails["Custom Art"] || ""}`,
+      `CFM: ${jobDetails.CFM || ""}`,
       newLine,
       `Additional Job Details:`,
     ];
@@ -114,34 +118,18 @@ export const Contact = () => {
 
   const openEmail = useCallback(async () => {
     const isAvailable = await MailComposer.isAvailableAsync();
-  
+
     if (!isAvailable) {
-      Alert.alert('Unable to open email client.');
+      Alert.alert("Unable to open email client.");
       return;
     }
 
     await MailComposer.composeAsync({
       subject: `Quote Request`,
-      recipients: ['andrew@prihodafabricduct.com'],
+      recipients: ["andrew@prihodafabricduct.com"],
       body: constructBody(),
       isHtml: true,
     });
-
-    // Linking.canOpenURL(linkingApp)
-    //   .then((supported) => {
-    //     console.log("supported", supported);
-    //     if (supported) {
-    //       Linking.openURL(
-    //         `${linkingApp}:andrew@prihodafabricduct.com?subject=Quote Request: &body=${constructBody()}`
-    //       ).catch((e) => {
-    //         console.log("e", e);
-    //       });
-    //     }
-    //     console.log("then after open");
-    //   })
-    //   .catch((e) => {
-    //     console.log("can not open linking app", e);
-    //   });
   }, [constructBody]);
 
   return (
@@ -207,73 +195,10 @@ export const Contact = () => {
               open={isOpen("Material Type")}
               selected={jobDetails["Material Type"]}
             >
-              <QuestionTitle>
-                Will you be cooling below dewpoint where there is there a risk
-                of condensation?
-              </QuestionTitle>
-              <Option
-                value="Yes (permeable: PMI, PMS)"
-                onSelect={(value: string) =>
-                  setJobDetails({
-                    field: "Material Type",
-                    value,
-                  })
-                }
-              />
-              <Option
-                value="No (PMI,PMS,NMI,NMS)"
-                onSelect={(value: string) =>
-                  setJobDetails({
-                    field: "Material Type",
-                    value,
-                  })
-                }
-              />
-              <QSeparator />
-              <QuestionTitle>
-                Do you require additional protection against microbial growth?
-              </QuestionTitle>
-              <Option
-                value="Yes (permeable: PMI, NMI)"
-                onSelect={(value: string) =>
-                  setJobDetails({
-                    field: "Material Type",
-                    value,
-                  })
-                }
-              />
-              <Option
-                value="No (PMS)"
-                onSelect={(value: string) =>
-                  setJobDetails({
-                    field: "Material Type",
-                    value,
-                  })
-                }
-              />
-              <QSeparator />
-              <QuestionTitle>
-                Is this an application where there can be no electro static
-                discharge (battery manufacturing, explosion proof facility etc.,
-                sensitive electronics)? (premium or not)
-              </QuestionTitle>
-              <Option
-                value="Yes (permeable: PMI, NMI)"
-                onSelect={(value: string) =>
-                  setJobDetails({
-                    field: "Material Type",
-                    value,
-                  })
-                }
-              />
-              <Option
-                value="No (PMS)"
-                onSelect={(value: string) =>
-                  setJobDetails({
-                    field: "Material Type",
-                    value,
-                  })
-                }
+              <MaterialSelection
+                onFinish={(value) => {
+                  setJobDetails({ field: "Material Type", value });
+                }}
               />
             </JobDetail>
             <JobDetail
@@ -340,7 +265,15 @@ export const Contact = () => {
               onClick={showOptions}
               open={isOpen("CFM")}
               selected={jobDetails["CFM"]}
-            ></JobDetail>
+            >
+              <Option
+                value="Use Ductulator to calculate"
+                onSelect={() => {
+                  navigation.navigate("Ductulator");
+                  showOptions([null, null]);
+                }}
+              />
+            </JobDetail>
           </View>
           <View style={{ paddingTop: 48, flex: 1 }} aria-role="presentation" />
           <Pressable
@@ -510,7 +443,7 @@ const SectionTitle = (props: PropsWithChildren<{ margin?: boolean }>) => (
 );
 
 const QuestionTitle = (props: PropsWithChildren) => (
-  <Text style={{ fontSize: 18, fontWeight: "400" }}>{props.children}</Text>
+  <Text style={{ fontSize: 18, fontWeight: "500" }}>{props.children}</Text>
 );
 
 const QSeparator = () => (
@@ -549,3 +482,109 @@ const Option = ({
     <Ionicons name="arrow-forward-circle-outline" size={32} color="#0f7ba5" />
   </Pressable>
 );
+
+const questions = [
+  {
+    id: 1,
+    question: `Will you be cooling below dewpoint where there is there a risk of condensation?`,
+    choices: {
+      yes: { label: "Yes (permeable)", types: ["PMI", "PMS"] },
+      no: { label: "No", types: ["PMI", "PMS", "NMI", "NMS"] },
+    },
+  },
+  {
+    id: 2,
+    question: `Do you require additional protection against microbial growth?`,
+    choices: {
+      yes: { label: "Yes (permeable)", types: ["PMI", "NMI"] },
+      no: { label: "No", types: ["PMS"] },
+    },
+  },
+  {
+    id: 3,
+    question: `Is this an application where there can be no electro static discharge (battery manufacturing, explosion proof facility etc., sensitive electronics)? (premium or not)`,
+    choices: {
+      yes: { label: `Yes (permeable)`, types: ["PMI", "NMI"] },
+      no: { label: `No`, types: ["PMS"] },
+    },
+  },
+];
+
+const MaterialSelection = ({ onFinish }) => {
+  const [agg, setAgg] = useState([]);
+  const [q, setQ] = useState(0);
+
+  const active = questions[q];
+  const selection = agg.join(",");
+
+  const handleAgg = useCallback(
+    (choice: "yes" | "no", opts) => {
+      setAgg((a) => {
+        if (a.length === 0) return opts;
+        if (choice === "yes") {
+          return a.filter((item) => opts.includes(item));
+        }
+        let existing = new Set(a);
+        for (const item of opts) {
+          existing = existing.add(item);
+        }
+        return [...existing];
+      });
+      setQ((qnum) => qnum + 1);
+    },
+    [setAgg]
+  );
+
+  return (
+    <View>
+      {active ? (
+        <View>
+          <QuestionTitle>{active.question}</QuestionTitle>
+          <QSeparator />
+          <Option
+            value={active.choices.yes.label}
+            onSelect={() => {
+              handleAgg("yes", active.choices.yes.types);
+            }}
+          />
+          <Option
+            value={active.choices.no.label}
+            onSelect={() => {
+              handleAgg("no", active.choices.no.types);
+            }}
+          />
+        </View>
+      ) : (
+        <View>
+          <QuestionTitle>
+            The recommended material type based on your selections is:
+          </QuestionTitle>
+          <QSeparator />
+        </View>
+      )}
+
+      {selection.length > 0 && active ? (
+        <Text
+          style={{
+            color: "#0f7ba5",
+            textAlign: "center",
+            lineHeight: 28,
+            fontWeight: "700",
+            fontSize: 22,
+          }}
+        >
+          {selection}
+        </Text>
+      ) : null}
+
+      {!active && (
+        <Option
+          value={selection}
+          onSelect={() => {
+            onFinish(agg);
+          }}
+        />
+      )}
+    </View>
+  );
+};

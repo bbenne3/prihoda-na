@@ -12,6 +12,7 @@ import {
   Switch,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { getStorageValue, setStorageValue } from "../utils/asyncStorage";
 
 type AirflowModes = "cfm" | "tonnage";
 
@@ -117,6 +118,13 @@ export const Ductulator = () => {
     }
   }, [airflowMode]);
 
+  // set the initial value to whatever was last selected
+  useEffect(() => {
+    getStorageValue("cfm").then((v) => {
+      if (v) setSize(v);
+    });
+  }, []);
+
   useEffect(() => {
     setSize((s) => {
       switch (airflowMode) {
@@ -127,6 +135,10 @@ export const Ductulator = () => {
       }
     });
   }, [airflowMode]);
+
+  useEffect(() => {
+    setStorageValue("cfm", size);
+  }, [size]);
 
   // dynamic conversion done based on the airflow type
   // uses the boundaries / limits previously determined.
@@ -469,7 +481,7 @@ const Recommendation = ({
           <Text style={[styles.note, styles.bold]}>
             {ductSizeDisplay} / {fpm}fpm
           </Text>
-          <View style={{marginTop: 8}} />
+          <View style={{ marginTop: 8 }} />
           <Text style={[styles.note]}>{additionalInfo}</Text>
         </View>
       )}
