@@ -193,7 +193,7 @@ export const Contact = ({ navigation, route }) => {
               type="Material Type"
               onClick={showOptions}
               open={isOpen("Material Type")}
-              selected={jobDetails["Material Type"]}
+              selected={jobDetails["Material Type"]?.join(",")}
             >
               <MaterialSelection
                 onFinish={(value) => {
