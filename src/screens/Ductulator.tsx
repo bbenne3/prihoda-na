@@ -473,7 +473,7 @@ const Recommendation = ({
           </View>
           <View style={[styles.recommendationData]}>
             <Text style={styles.value}>{fpm}</Text>
-            <Text style={styles.label}>FPM</Text>
+            <Text style={styles.label}>FPM (max)</Text>
           </View>
         </View>
       ) : (

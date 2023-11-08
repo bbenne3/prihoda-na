@@ -22,7 +22,7 @@ export const Home = ({ navigation }) => {
         <Image
           source={{ uri: logoSource.uri }}
           width={300}
-          style={{ aspectRatio: "7/2.5", marginLeft: !isAndroid ? -20 : 0 }}
+          style={{ aspectRatio: "7/2.8", marginLeft: !isAndroid ? -20 : 0 }}
         />
       </View>
       <View
