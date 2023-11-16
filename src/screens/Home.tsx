@@ -3,27 +3,38 @@ import {
   SafeAreaView,
   Pressable,
   View,
-  Image,
   StyleSheet,
   Platform,
   StatusBar,
 } from "react-native";
-
-const logoSource = Image.resolveAssetSource(
-  require("../../assets/logos/logo_h_mobile.png")
-);
+import SplashLogo from "../components/icons/SplashLogo";
 
 const isAndroid = Platform.OS === "android";
 
 export const Home = ({ navigation }) => {
   return (
-    <SafeAreaView style={[{ display: "flex", flex: 1, alignItems: 'center', justifyContent: 'center', gap: 64 }, styles.safeArea]}>
+    <SafeAreaView
+      style={[
+        {
+          display: "flex",
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 64,
+        },
+        styles.safeArea,
+      ]}
+    >
       <View style={{ width: "100%", display: "flex", alignItems: "center" }}>
-        <Image
-          source={{ uri: logoSource.uri }}
-          width={300}
-          style={{ aspectRatio: "7/2.8", marginLeft: !isAndroid ? -20 : 0 }}
-        />
+        <View
+          style={{
+            aspectRatio: "7/2.8",
+            width: 300,
+            marginLeft: !isAndroid ? -20 : 0,
+          }}
+        >
+          <SplashLogo />
+        </View>
       </View>
       <View
         style={{

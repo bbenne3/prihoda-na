@@ -22,10 +22,7 @@ import {
   useState,
 } from "react";
 import * as MailComposer from "expo-mail-composer";
-
-const logoSource = Image.resolveAssetSource(
-  require("../../assets/logos/logo_h_mobile.png")
-);
+import SplashLogo from "../components/icons/SplashLogo";
 
 const defaultJobDetails = {
   "Suspension Method": null,
@@ -85,11 +82,15 @@ export const Contact = ({ navigation, route }) => {
         <View style={{ paddingTop: 48, flex: 1 }} aria-role="presentation" />
 
         <View style={{ width: "100%", display: "flex", alignItems: "center" }}>
-          <Image
-            source={{ uri: logoSource.uri }}
-            width={300}
-            style={{ aspectRatio: "7/2.8", marginLeft: !isAndroid ? -20 : 0 }}
-          />
+          <View
+            style={{
+              aspectRatio: "7/2.8",
+              width: 300,
+              marginLeft: !isAndroid ? -20 : 0,
+            }}
+          >
+            <SplashLogo />
+          </View>
         </View>
         <View
           style={{
@@ -100,34 +101,34 @@ export const Contact = ({ navigation, route }) => {
           }}
         >
           <Pressable
-           onPress={() => {
-             openEmail();
-           }}
-           style={{
-             backgroundColor: "#0f7ba5",
-             padding: 24,
-             maxWidth: 400,
-             gap: 8,
-             display: "flex",
-             flexDirection: "row",
-             alignSelf: "center",
-             alignItems: "center",
-             justifyContent: "flex-end",
-           }}
-         >
-           <Text
-             style={{
-               color: "#FFFFFF",
-               textAlign: "center",
-               lineHeight: 28,
-               fontWeight: "700",
-               fontSize: 22,
-             }}
-           >
-             Get Quote Selection{" "}
-           </Text>
-           <FontAwesome5 name="external-link-alt" size={16} color="#FFFFFF" />
-         </Pressable>
+            onPress={() => {
+              openEmail();
+            }}
+            style={{
+              backgroundColor: "#0f7ba5",
+              padding: 24,
+              maxWidth: 400,
+              gap: 8,
+              display: "flex",
+              flexDirection: "row",
+              alignSelf: "center",
+              alignItems: "center",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Text
+              style={{
+                color: "#FFFFFF",
+                textAlign: "center",
+                lineHeight: 28,
+                fontWeight: "700",
+                fontSize: 22,
+              }}
+            >
+              Get Quote Selection{" "}
+            </Text>
+            <FontAwesome5 name="external-link-alt" size={16} color="#FFFFFF" />
+          </Pressable>
           {/* <View style={{ paddingBottom: 16 }} aria-role="presentation" /> */}
         </View>
         <View style={{ paddingTop: 48, flex: 1 }} aria-role="presentation" />
