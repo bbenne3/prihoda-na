@@ -24,8 +24,12 @@ import {
 import * as MailComposer from "expo-mail-composer";
 import { getStorageValue } from "../utils/asyncStorage";
 
+const logoSource = Image.resolveAssetSource(
+  require("../../assets/logos/logo_h_mobile.png")
+);
+
 const resolved = Image.resolveAssetSource(
-  require("../../assets/logos/Prihoda3.png")
+  require("../../assets/logos/logo-plain-lg.png")
 );
 
 const defaultJobDetails = {
@@ -48,73 +52,80 @@ type JobDetailsAction =
     };
 
 export const Contact = ({ navigation, route }) => {
-  const [[showingTitle, showing], showOptions] = useState<
-    [JobDetailCategories, PropsWithChildren["children"]]
-  >([null, null]);
+  // const [[showingTitle, showing], showOptions] = useState<
+  //   [JobDetailCategories, PropsWithChildren["children"]]
+  // >([null, null]);
 
-  const [jobDetails, setJobDetails] = useReducer(
-    (dets: typeof defaultJobDetails, action: JobDetailsAction) => {
-      switch (action.field) {
-        case "Suspension Method":
-          return { ...dets, "Suspension Method": action.value };
-        case "Material Type":
-          return { ...dets, "Material Type": action.value };
-        case "Dispersion Type":
-          return { ...dets, "Dispersion Type": action.value };
-        case "Custom Art":
-          return { ...dets, "Custom Art": action.value };
-        case "CFM":
-          return { ...dets, CFM: action.value };
-        case "reset":
-          return defaultJobDetails;
-        default:
-          return dets;
-      }
-    },
-    {
-      "Suspension Method": null,
-      "Material Type": null,
-      "Dispersion Type": null,
-      "Custom Art": null,
-      CFM: null,
-    }
-  );
+  // const [jobDetails, setJobDetails] = useReducer(
+  //   (dets: typeof defaultJobDetails, action: JobDetailsAction) => {
+  //     switch (action.field) {
+  //       case "Suspension Method":
+  //         return { ...dets, "Suspension Method": action.value };
+  //       case "Material Type":
+  //         return { ...dets, "Material Type": action.value };
+  //       case "Dispersion Type":
+  //         return { ...dets, "Dispersion Type": action.value };
+  //       case "Custom Art":
+  //         return { ...dets, "Custom Art": action.value };
+  //       case "CFM":
+  //         return { ...dets, CFM: action.value };
+  //       case "reset":
+  //         return defaultJobDetails;
+  //       default:
+  //         return dets;
+  //     }
+  //   },
+  //   {
+  //     "Suspension Method": null,
+  //     "Material Type": null,
+  //     "Dispersion Type": null,
+  //     "Custom Art": null,
+  //     CFM: null,
+  //   }
+  // );
 
-  useEffect(() => {
-    const unsub = navigation.addListener("focus", () => {
-      getStorageValue("cfm").then((v) => {
-        if (v) setJobDetails({ field: "CFM", value: v });
-      });
-    });
+  // useEffect(() => {
+  //   const unsub = navigation.addListener("focus", () => {
+  //     getStorageValue("cfm").then((v) => {
+  //       if (v) setJobDetails({ field: "CFM", value: v });
+  //     });
+  //   });
 
-    return unsub;
-  }, []);
+  //   return unsub;
+  // }, []);
 
-  useEffect(() => {
-    showOptions([null, null]);
-  }, [jobDetails, showOptions]);
+  // useEffect(() => {
+  //   showOptions([null, null]);
+  // }, [jobDetails, showOptions]);
 
-  const isOpen = useCallback(
-    (title: JobDetailCategories) => title === showingTitle,
-    [showingTitle]
-  );
+  // const isOpen = useCallback(
+  //   (title: JobDetailCategories) => title === showingTitle,
+  //   [showingTitle]
+  // );
+
+  // const constructBody = useCallback(() => {
+  //   const isHtml = true;
+  //   const newLine = isHtml ? "<br />" : `\r\n`;
+  //   const parts = [
+  //     `<b>Job Details</b>`,
+  //     newLine,
+  //     `Suspension Type: ${jobDetails["Suspension Method"] || ""}`,
+  //     `Material Type: ${jobDetails["Material Type"] || ""}`,
+  //     `Dispersion Method: ${jobDetails["Dispersion Type"] || ""}`,
+  //     `Custom Art: ${jobDetails["Custom Art"] || ""}`,
+  //     `CFM: ${jobDetails.CFM || ""}`,
+  //     newLine,
+  //     `Additional Job Details:`,
+  //   ];
+  //   return parts.join(newLine);
+  // }, [jobDetails]);
 
   const constructBody = useCallback(() => {
     const isHtml = true;
     const newLine = isHtml ? "<br />" : `\r\n`;
-    const parts = [
-      `<b>Job Details</b>`,
-      newLine,
-      `Suspension Type: ${jobDetails["Suspension Method"] || ""}`,
-      `Material Type: ${jobDetails["Material Type"] || ""}`,
-      `Dispersion Method: ${jobDetails["Dispersion Type"] || ""}`,
-      `Custom Art: ${jobDetails["Custom Art"] || ""}`,
-      `CFM: ${jobDetails.CFM || ""}`,
-      newLine,
-      `Additional Job Details:`,
-    ];
+    const parts = [`Name: `, `Location: `, `Phone: `, `Email: `];
     return parts.join(newLine);
-  }, [jobDetails]);
+  }, []);
 
   const openEmail = useCallback(async () => {
     const isAvailable = await MailComposer.isAvailableAsync();
@@ -137,23 +148,11 @@ export const Contact = ({ navigation, route }) => {
       <View
         style={{
           flex: 1,
+          paddingTop: 100,
+          paddingBottom: 20
         }}
       >
-        <ImageBackground
-          style={{
-            display: "flex",
-            flex: 1,
-            padding: 24,
-          }}
-          resizeMode="contain"
-          source={{ uri: resolved.uri }}
-          imageStyle={{
-            opacity: 0.1,
-            position: "absolute",
-            right: "-75%",
-          }}
-        >
-          <Text
+        {/* <Text
             style={{
               fontSize: 32,
               fontWeight: "700",
@@ -274,54 +273,61 @@ export const Contact = ({ navigation, route }) => {
                 }}
               />
             </JobDetail>
-          </View>
-          <View style={{ paddingTop: 48, flex: 1 }} aria-role="presentation" />
-          <Pressable
-            onPress={() => {
-              openEmail();
-            }}
+          </View> */}
+        <View style={{ width: "100%", display: "flex", alignItems: "center" }}>
+          <Image
+            source={{ uri: logoSource.uri }}
+            width={300}
+            style={{ aspectRatio: "7/2.8" }}
+          />
+        </View>
+        <View style={{ paddingTop: 48, flex: 1 }} aria-role="presentation" />
+        <Pressable
+          onPress={() => {
+            openEmail();
+          }}
+          style={{
+            backgroundColor: "#0f7ba5",
+            paddingVertical: 16,
+            paddingHorizontal: 22,
+            maxWidth: 400,
+            gap: 8,
+            display: "flex",
+            flexDirection: "row",
+            alignSelf: "center",
+            alignItems: "center",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Text
             style={{
-              backgroundColor: "#0f7ba5",
-              paddingVertical: 16,
-              paddingHorizontal: 22,
-              maxWidth: 400,
-              gap: 8,
-              display: "flex",
-              flexDirection: "row",
-              alignSelf: "center",
-              alignItems: "center",
-              justifyContent: "flex-end",
+              color: "#FFFFFF",
+              textAlign: "center",
+              lineHeight: 28,
+              fontWeight: "700",
+              fontSize: 22,
             }}
           >
-            <Text
-              style={{
-                color: "#FFFFFF",
-                textAlign: "center",
-                lineHeight: 28,
-                fontWeight: "700",
-                fontSize: 22,
-              }}
-            >
-              Get Quote Selection{" "}
-            </Text>
-            <FontAwesome5 name="external-link-alt" size={16} color="#FFFFFF" />
-          </Pressable>
-          <View style={{ paddingBottom: 48 }} aria-role="presentation" />
-          <Text style={{ textAlign: "center" }}>
-            {" "}
-            &#169; Prihoda, NA | All Rights Reserved
+            Get Quote Selection{" "}
           </Text>
-          <View style={{ paddingBottom: 16 }} aria-role="presentation" />
-          <A
-            href="https://prihodafabricduct.com"
-            style={{ color: "#01ad7f", textAlign: "center" }}
-          >
-            https://prihodafabricduct.com{" "}
-            <FontAwesome5 name="external-link-alt" size={16} color="#01ad7f" />
-          </A>
-        </ImageBackground>
+          <FontAwesome5 name="external-link-alt" size={16} color="#FFFFFF" />
+        </Pressable>
+        <View style={{ paddingTop: 48, flex: 1 }} aria-role="presentation" />
+        <View style={{ paddingBottom: 48 }} aria-role="presentation" />
+        <Text style={{ textAlign: "center" }}>
+          {" "}
+          &#169; Prihoda, NA | All Rights Reserved
+        </Text>
+        <View style={{ paddingBottom: 16 }} aria-role="presentation" />
+        <A
+          href="https://prihodafabricduct.com"
+          style={{ color: "#01ad7f", textAlign: "center" }}
+        >
+          https://prihodafabricduct.com{" "}
+          <FontAwesome5 name="external-link-alt" size={16} color="#01ad7f" />
+        </A>
       </View>
-      <Modal
+      {/* <Modal
         animationType="slide"
         visible={!!showing}
         onRequestClose={() => showOptions([null, null])}
@@ -348,7 +354,7 @@ export const Contact = ({ navigation, route }) => {
             {showing}
           </View>
         </SafeAreaView>
-      </Modal>
+      </Modal> */}
     </SafeAreaView>
   );
 };

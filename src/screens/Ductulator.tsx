@@ -60,7 +60,7 @@ function getDescription(fpm: number): [string, string | null | undefined] {
     case 1000:
       return [
         "Sound sensitive application",
-        "Sound sensitive applications such as recording studios, libraries, classrooms, etc. need even lower velocities to reduce air movement noise.  Sounds attenuation prior to fabric should be considered (fabric or metal silencers, duct lining).",
+        "Sound sensitive applications such as recording studios, libraries, classrooms, etc. need even lower velocities to reduce air movement noise.  Sound attenuation prior to fabric should be considered (fabric or metal silencers, duct lining).",
       ];
     case 1200:
       return [
@@ -479,7 +479,7 @@ const Recommendation = ({
       ) : (
         <View style={[styles.additionalInfo]}>
           <Text style={[styles.note, styles.bold]}>
-            {ductSizeDisplay} / {fpm}fpm
+            {ductSizeDisplay} / {fpm}fpm (max)
           </Text>
           <View style={{ marginTop: 8 }} />
           <Text style={[styles.note]}>{additionalInfo}</Text>

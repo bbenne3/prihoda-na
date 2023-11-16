@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "prihoda-na",
-    "slug": "prihoda-na",
+    "name": "Fabric Ductulator",
+    "slug": "fabric-ductulator",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon.jpg",
     "userInterfaceStyle": "light",
     "experiments": {
       "tsconfigPaths": false
@@ -23,19 +23,19 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/adaptive-icon.jpg",
         "backgroundColor": "#ffffff"
       },
       "package": "com.app.prihodaus"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.jpg"
     },
+    "owner": "bennettb0677",
     "extra": {
       "eas": {
-        "projectId": "7500ea1b-9c6e-4169-a931-d62de7607936"
+        "projectId": "57d8fa8a-677c-4b3c-9e4d-41369f9599bd"
       }
-    },
-    "owner": "bennettb0677"
+    }
   }
 }

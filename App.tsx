@@ -12,6 +12,8 @@ import { useEffect, useState } from "react";
 
 SplashScreen.preventAutoHideAsync();
 
+const logoSmall = require("./assets/logos/logo-plain-small.png")
+
 const Tab = createBottomTabNavigator();
 
 export default function App() {
@@ -62,7 +64,7 @@ export default function App() {
                 }}
                 resizeMethod="resize"
                 resizeMode="center"
-                source={require("./assets/icon.png")}
+                source={logoSmall}
               />
             ),
           }}
