@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
-import { FontAwesome5 } from '@expo/vector-icons'; 
-import { Ionicons } from '@expo/vector-icons'; 
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -10,13 +10,12 @@ import { Ductulator } from "./src/screens/Ductulator";
 import { Contact } from "./src/screens/Contact";
 import { useEffect, useState } from "react";
 
-SplashScreen.preventAutoHideAsync();
-
-const logoSmall = require("./assets/logos/logo-plain-small.png")
+const logoSmall = require("./assets/logos/logo-plain-small.png");
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+  SplashScreen.preventAutoHideAsync();
   const [appReady, setAppReady] = useState(false);
 
   useEffect(() => {
@@ -80,11 +79,15 @@ export default function App() {
             ),
           }}
         />
-        <Tab.Screen name="Contact" component={Contact} options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons name="mail-open" size={size} color={color} />
-          )
-        }} />
+        <Tab.Screen
+          name="Contact"
+          component={Contact}
+          options={{
+            tabBarIcon: ({ focused, color, size }) => (
+              <Ionicons name="mail-open" size={size} color={color} />
+            ),
+          }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );
