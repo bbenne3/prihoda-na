@@ -51,7 +51,7 @@ export const Contact = ({ navigation, route }) => {
     }
 
     await MailComposer.composeAsync({
-      subject: `Quote Request`,
+      subject: `Ductulator Inquiry App`,
       recipients: ["andrew@prihodafabricduct.com"],
       body: constructBody(),
       isHtml: true,
