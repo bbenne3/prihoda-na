@@ -36,7 +36,7 @@ type JobDetailCategories = keyof typeof defaultJobDetails;
 
 export const Contact = ({ navigation, route }) => {
   const constructBody = useCallback(() => {
-    const isHtml = false;
+    const isHtml = true;
     const newLine = isHtml ? "<br />" : `\r\n`;
     const parts = [`Name: `, `Location: `, `Phone: `, `Email: `];
     return parts.join(newLine);
