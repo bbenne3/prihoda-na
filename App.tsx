@@ -50,9 +50,9 @@ export default function App() {
             header: () => undefined,
             tabBarLabel: "Prihoda",
             tabBarIconStyle: {
-              overflow: "hidden",
-              width: "100%",
-              height: "100%",
+              // overflow: "hidden",
+              // width: "100%",
+              // height: "100%",
             },
             tabBarIcon: ({ focused, color, size }) => (
               <Image
