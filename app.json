@@ -14,7 +14,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.app.prihodaus"
@@ -46,6 +48,10 @@
           }
         }
       ]
-    ]
+    ],
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/57d8fa8a-677c-4b3c-9e4d-41369f9599bd"
+    }
   }
 }
