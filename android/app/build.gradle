@@ -82,6 +82,9 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     namespace 'com.app.prihodaus'
+    buildFeatures {
+        buildConfig true
+    }
     defaultConfig {
         applicationId 'com.app.prihodaus'
         minSdkVersion rootProject.ext.minSdkVersion
